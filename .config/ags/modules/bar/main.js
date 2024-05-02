@@ -10,9 +10,9 @@ import { enableClickthrough } from "../.widgetutils/clickthrough.js";
 import { RoundedCorner } from "../.commonwidgets/cairo_roundedcorner.js";
 import { currentShellMode } from '../../variables.js';
 
-const NormalOptionalWorkspaces = async () => {
+const NormalOptionalWorkspaces = async (monitor_id=0) => {
     try {
-        return (await import('./normal/workspaces_hyprland.js')).default();
+        return (await import('./normal/workspaces_hyprland.js')).default(monitor_id);
     } catch {
         try {
             return (await import('./normal/workspaces_sway.js')).default();
@@ -34,7 +34,7 @@ const FocusOptionalWorkspaces = async () => {
     }
 };
 
-export const Bar = async (monitor = 0) => {
+export const Bar = async (monitor_id = 0) => {
     const SideModule = (children) => Widget.Box({
         className: 'bar-sidemodule',
         children: children,
@@ -53,7 +53,7 @@ export const Bar = async (monitor = 0) => {
                 SideModule([Music()]),
                 Widget.Box({
                     homogeneous: true,
-                    children: [await NormalOptionalWorkspaces()],
+                    children: [await NormalOptionalWorkspaces(monitor_id)],
                 }),
                 SideModule([System()]),
             ]
@@ -83,8 +83,8 @@ export const Bar = async (monitor = 0) => {
         }
     });
     return Widget.Window({
-        monitor,
-        name: `bar${monitor}`,
+        monitor: monitor_id,
+        name: `bar${monitor_id}`,
         anchor: ['top', 'left', 'right'],
         exclusivity: 'exclusive',
         visible: true,

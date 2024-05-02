@@ -35,15 +35,12 @@ alias paruS="sudo pacman -Sy && sudo powerpill -Su && paru -Su"
 export PATH="/usr/lib/cache/bin/:$PATH"
 
 # -----------------------------------------------------
-# DEVELOPMENT
-# -----------------------------------------------------
-alias dotsync="~/dotfiles-versions/dotfiles/.dev/sync.sh dotfiles"
-
-# -----------------------------------------------------
 # START STARSHIP
 # -----------------------------------------------------
+if [[ "$TERM_PROGRAM" != "vscode" ]];
+then
 eval "$(starship init bash)"
-
+fi
 # -----------------------------------------------------
 # PYWAL
 # -----------------------------------------------------
@@ -63,3 +60,23 @@ else
         echo "Start Hyprland with command Hyprland"
     fi
 fi
+
+# >>> conda initialize >>>
+# !! Contents within this block are managed by 'conda init' !!
+__conda_setup="$('/home/saipavanchitta/mambaforge/bin/conda' 'shell.bash' 'hook' 2> /dev/null)"
+if [ $? -eq 0 ]; then
+    eval "$__conda_setup"
+else
+    if [ -f "/home/saipavanchitta/mambaforge/etc/profile.d/conda.sh" ]; then
+        . "/home/saipavanchitta/mambaforge/etc/profile.d/conda.sh"
+    else
+        export PATH="/home/saipavanchitta/mambaforge/bin:$PATH"
+    fi
+fi
+unset __conda_setup
+
+if [ -f "/home/saipavanchitta/mambaforge/etc/profile.d/mamba.sh" ]; then
+    . "/home/saipavanchitta/mambaforge/etc/profile.d/mamba.sh"
+fi
+# <<< conda initialize <<<
+

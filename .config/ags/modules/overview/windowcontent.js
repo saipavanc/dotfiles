@@ -105,6 +105,7 @@ export const SearchAndWindows = (show_overview) => {
                     // copy
                     execAsync(['wl-copy', `${fullResult}`]).catch(print);
                     App.closeWindow('overview');
+                    App.closeWindow('applauncher');
                     return;
                 } catch (e) {
                     // console.log(e);
@@ -112,16 +113,19 @@ export const SearchAndWindows = (show_overview) => {
             }
             if (isDir) {
                 App.closeWindow('overview');
+                App.closeWindow('applauncher');
                 execAsync(['bash', '-c', `xdg-open "${expandTilde(text)}"`, `&`]).catch(print);
                 return;
             }
             if (_appSearchResults.length > 0) {
                 App.closeWindow('overview');
+                App.closeWindow('applauncher');
                 _appSearchResults[0].launch();
                 return;
             }
             else if (text[0] == '>') { // Custom commands
                 App.closeWindow('overview');
+                App.closeWindow('applauncher');
                 launchCustomCommand(text);
                 return;
             }
@@ -136,6 +140,7 @@ export const SearchAndWindows = (show_overview) => {
             else {
                 GeminiService.send(text);
                 App.closeWindow('overview');
+                App.closeWindow('applauncher');
                 App.openWindow('sideleft');
             }
         },
@@ -222,7 +227,7 @@ export const SearchAndWindows = (show_overview) => {
         ],
         setup: (self) => self
             .hook(App, (_b, name, visible) => {
-                if (name == 'overview' && !visible) {
+                if (name == 'overview' || name == 'applauncher' && !visible) {
                     resultsBox.children = [];
                     entry.set_text('');
                 }

@@ -3,7 +3,7 @@ import { SearchAndWindows } from "./windowcontent.js";
 import PopupWindow from '../.widgethacks/popupwindow.js';
 
 export default (id = '') => PopupWindow({
-    name: `search${id}`,
+    name: `applauncher${id}`,
     // exclusivity: 'ignore',
     keymode: 'exclusive',
     visible: false,

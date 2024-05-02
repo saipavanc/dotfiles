@@ -4,7 +4,7 @@ import PopupWindow from '../.widgethacks/popupwindow.js';
 import { SCREEN_HEIGHT, SCREEN_WIDTH } from '../../variables.js';
 
 const WINDOWS_NEED_CLICK2CLOSE = [
-    'sideleft', 'sideright', 'overview', 'cheatsheet'
+    'sideleft', 'sideright', 'overview', 'cheatsheet', 'applauncher'
 ];
 
 const range = (length, start = 1) => Array.from({ length }, (_, i) => i + start);

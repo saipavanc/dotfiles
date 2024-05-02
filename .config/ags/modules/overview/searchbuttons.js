@@ -27,6 +27,7 @@ export const DirectoryButton = ({ parentPath, name, type, icon }) => {
         className: 'overview-search-result-btn',
         onClicked: () => {
             App.closeWindow('overview');
+            App.closeWindow('applauncher');
             execAsync(['bash', '-c', `xdg-open '${parentPath}/${name}'`, `&`]).catch(print);
         },
         child: Widget.Box({
@@ -71,6 +72,7 @@ export const CalculationResultButton = ({ result, text }) => searchItem({
     content: `${result}`,
     onActivate: () => {
         App.closeWindow('overview');
+        App.closeWindow('applauncher');
         execAsync(['wl-copy', `${result}`]).catch(print);
     },
 });
@@ -94,7 +96,8 @@ export const DesktopEntryButton = (app) => {
     return Widget.Button({
         className: 'overview-search-result-btn',
         onClicked: () => {
-            App.closeWindow('overview');
+        App.closeWindow('applauncher');
+        App.closeWindow('overview');
             app.launch();
         },
         child: Widget.Box({
@@ -147,6 +150,7 @@ export const CustomCommandButton = ({ text = '' }) => searchItem({
     actionName: 'Run',
     content: `${text}`,
     onActivate: () => {
+        App.closeWindow('applauncher');
         App.closeWindow('overview');
         launchCustomCommand(text);
     },
@@ -158,6 +162,7 @@ export const SearchButton = ({ text = '' }) => searchItem({
     actionName: 'Go',
     content: `${text}`,
     onActivate: () => {
+        App.closeWindow('applauncher');
         App.closeWindow('overview');
         execAsync(['bash', '-c', `xdg-open '${userOptions.search.engineBaseUrl}${text} ${['', ...userOptions.search.excludedSites].join(' -site:')}' &`]).catch(print);
     },
@@ -170,6 +175,7 @@ export const AiButton = ({ text }) => searchItem({
     content: `${text}`,
     onActivate: () => {
         GeminiService.send(text);
+        App.closeWindow('applauncher');
         App.closeWindow('overview');
         App.openWindow('sideleft');
     },

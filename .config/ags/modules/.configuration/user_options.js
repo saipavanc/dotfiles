@@ -74,7 +74,6 @@ let configOptions = {
         'city': "",
     },
     'workspaces': {
-        'shown': 10,
     },
     'dock': {
         'enabled': true,

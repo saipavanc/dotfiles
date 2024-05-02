@@ -57,6 +57,6 @@ globalThis['closeEverything'] = () => {
     App.closeWindow('sideleft');
     App.closeWindow('sideright');
     App.closeWindow('overview');
-    App.closeWindow('search');
+    App.closeWindow('applauncher');
     App.closeWindow('session');
 };

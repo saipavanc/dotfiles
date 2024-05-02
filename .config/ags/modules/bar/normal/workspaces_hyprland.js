@@ -14,21 +14,25 @@ const dummyActiveWs = Box({ className: 'bar-ws bar-ws-active' }); // Not shown. 
 const dummyOccupiedWs = Box({ className: 'bar-ws bar-ws-occupied' }); // Not shown. Only for getting size props
 
 // Font size = workspace id
-const WorkspaceContents = (count = 10) => {
+const WorkspaceContents = (monitor_id) => {
     return DrawingArea({
         // css: `transition: 300ms cubic-bezier(0.1, 1, 0, 1);`,
         attribute: {
             initialized: false,
             workspaceMask: 0,
             workspaceGroup: 0,
+            workspaceCount: Hyprland.workspaces.filter(ws => ws.monitorID === monitor_id).length,
             updateMask: (self) => {
-                const offset = Math.floor((Hyprland.active.workspace.id - 1) / count) * userOptions.workspaces.shown;
                 // if (self.attribute.initialized) return; // We only need this to run once
-                const workspaces = Hyprland.workspaces;
+                const workspaces = Hyprland.workspaces.filter(ws => ws.monitorID === monitor_id);// get workspaces for the current monitor
+                self.workspaceCount = workspaces.length;
+                const offset = Math.floor((Hyprland.active.workspace.id - 1) / self.workspaceCount) * self.workspaceCount;
+                // if (!workspaces.includes(Hyprland.active.workspace)) return;
+
                 let workspaceMask = 0;
                 for (let i = 0; i < workspaces.length; i++) {
                     const ws = workspaces[i];
-                    if (ws.id <= offset || ws.id > offset + count) continue; // Out of range, ignore
+                    if (ws.id <= offset || ws.id > offset + self.workspaceCount) continue; // Out of range, ignore
                     if (workspaces[i].windows > 0)
                         workspaceMask |= (1 << (ws.id - offset));
                 }
@@ -45,9 +49,9 @@ const WorkspaceContents = (count = 10) => {
         },
         setup: (area) => area
             .hook(Hyprland.active.workspace, (self) => {
-                self.setCss(`font-size: ${(Hyprland.active.workspace.id - 1) % count + 1}px;`);
+                self.setCss(`font-size: ${(Hyprland.active.workspace.id - 1) % self.workspaceCount + 1}px;`);
                 const previousGroup = self.attribute.workspaceGroup;
-                const currentGroup = Math.floor((Hyprland.active.workspace.id - 1) / count);
+                const currentGroup = Math.floor((Hyprland.active.workspace.id - 1) / self.workspaceCount);
                 if (currentGroup !== previousGroup) {
                     self.attribute.updateMask(self);
                     self.attribute.workspaceGroup = currentGroup;
@@ -55,7 +59,8 @@ const WorkspaceContents = (count = 10) => {
             })
             .hook(Hyprland, (self) => self.attribute.updateMask(self), 'notify::workspaces')
             .on('draw', Lang.bind(area, (area, cr) => {
-                const offset = Math.floor((Hyprland.active.workspace.id - 1) / count) * userOptions.workspaces.shown;
+                const workspaceCount = Hyprland.workspaces.filter(ws => ws.monitorID === monitor_id).length;
+                const offset = Math.floor((Hyprland.active.workspace.id - 1) / workspaceCount) * workspaceCount;
 
                 const allocation = area.get_allocation();
                 const { width, height } = allocation;
@@ -75,7 +80,7 @@ const WorkspaceContents = (count = 10) => {
                 const activeWorkspaceStyleContext = dummyActiveWs.get_style_context();
                 const activebg = activeWorkspaceStyleContext.get_property('background-color', Gtk.StateFlags.NORMAL);
                 const activefg = activeWorkspaceStyleContext.get_property('color', Gtk.StateFlags.NORMAL);
-                area.set_size_request(workspaceDiameter * count, -1);
+                area.set_size_request(workspaceDiameter * workspaceCount, -1);
                 const widgetStyleContext = area.get_style_context();
                 const activeWs = widgetStyleContext.get_property('font-size', Gtk.StateFlags.NORMAL);
 
@@ -88,13 +93,13 @@ const WorkspaceContents = (count = 10) => {
                 layout.set_font_description(fontDesc);
                 cr.setAntialias(Cairo.Antialias.BEST);
                 // Get kinda min radius for number indicators
-                layout.set_text("0".repeat(count.toString().length), -1);
+                layout.set_text("0".repeat(workspaceCount.toString().length), -1);
                 const [layoutWidth, layoutHeight] = layout.get_pixel_size();
                 const indicatorRadius = Math.max(layoutWidth, layoutHeight) / 2 * 1.2; // a bit smaller than sqrt(2)*radius
                 const indicatorGap = workspaceRadius - indicatorRadius;
 
                 // Draw workspace numbers
-                for (let i = 1; i <= count; i++) {
+                for (let i = 1; i <= workspaceCount; i++) {
                     if (area.attribute.workspaceMask & (1 << i)) {
                         // Draw bg highlight
                         cr.setSourceRGBA(occupiedbg.red, occupiedbg.green, occupiedbg.blue, occupiedbg.alpha);
@@ -146,7 +151,7 @@ const WorkspaceContents = (count = 10) => {
     })
 }
 
-export default () => EventBox({
+export default (monitor_id) => EventBox({
     onScrollUp: () => Hyprland.messageAsync(`dispatch workspace -1`).catch(print),
     onScrollDown: () => Hyprland.messageAsync(`dispatch workspace +1`).catch(print),
     onMiddleClick: () => toggleWindowOnAllMonitors('osk'),
@@ -161,7 +166,7 @@ export default () => EventBox({
         children: [Box({
             className: 'bar-group bar-group-standalone bar-group-pad',
             css: 'min-width: 2px;',
-            children: [WorkspaceContents(userOptions.workspaces.shown)],
+            children: [WorkspaceContents(monitor_id)],
         })]
     }),
     setup: (self) => {
@@ -170,7 +175,7 @@ export default () => EventBox({
             if (!self.attribute.clicked) return;
             const [_, cursorX, cursorY] = event.get_coords();
             const widgetWidth = self.get_allocation().width;
-            const wsId = Math.ceil(cursorX * userOptions.workspaces.shown / widgetWidth);
+            const wsId = Math.ceil(cursorX * self.workspaceCount / widgetWidth);
             Utils.execAsync([`${App.configDir}/scripts/hyprland/workspace_action.sh`, 'workspace', `${wsId}`])
                 .catch(print);
         })
@@ -179,7 +184,7 @@ export default () => EventBox({
                 self.attribute.clicked = true;
                 const [_, cursorX, cursorY] = event.get_coords();
                 const widgetWidth = self.get_allocation().width;
-                const wsId = Math.ceil(cursorX * userOptions.workspaces.shown / widgetWidth);
+                const wsId = Math.ceil(cursorX * self.workspaceCount / widgetWidth);
                 Utils.execAsync([`${App.configDir}/scripts/hyprland/workspace_action.sh`, 'workspace', `${wsId}`])
                     .catch(print);
             }

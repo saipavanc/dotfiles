@@ -77,6 +77,7 @@ export function launchCustomCommand(command) {
 
 export function execAndClose(command, terminal) {
     App.closeWindow('overview');
+    App.closeWindow('applauncher');
     if (terminal) {
         execAsync([`bash`, `-c`, `${userOptions.apps.terminal} fish -C "${command}"`, `&`]).catch(print);
     }
