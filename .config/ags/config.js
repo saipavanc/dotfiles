@@ -10,14 +10,14 @@ import { firstRunWelcome } from './services/messages.js';
 // Widgets
 import { Bar, BarCornerTopleft, BarCornerTopright } from './modules/bar/main.js';
 import Cheatsheet from './modules/cheatsheet/main.js';
-// import DesktopBackground from './modules/desktopbackground/main.js';
+import DesktopBackground from './modules/desktopbackground/main.js';
 import Dock from './modules/dock/main.js';
 import Corner from './modules/screencorners/main.js';
 import Indicator from './modules/indicators/main.js';
 import Osk from './modules/onscreenkeyboard/main.js';
 
 import Overview from './modules/overview/main_overview.js';
-import Search from './modules/overview/main_search.js';
+import Applauncher from './modules/overview/main_search.js';
 
 import Session from './modules/session/main.js';
 import SideLeft from './modules/sideleft/main.js';
@@ -25,14 +25,12 @@ import SideRight from './modules/sideright/main.js';
 import Click2Close from './modules/click2close/main.js';
 
 const COMPILED_STYLE_DIR = `${GLib.get_user_cache_dir()}/ags/user/generated`
-const range = (length, start = 1) => Array.from({ length }, (_, i) => i + start);
+
 function forMonitors(widget) {
-    const n = Gdk.Display.get_default()?.get_n_monitors() || 1;
-    return range(n, 0).map(widget).flat(1);
-}
-function forMonitorsAsync(widget) {
-    const n = Gdk.Display.get_default()?.get_n_monitors() || 1;
-    return range(n, 0).forEach((n) => widget(n).catch(print))
+    const monitors = JSON.parse(Utils.exec('hyprctl monitors -j'));
+    for (const monitor of monitors) {
+        widget(monitor.name);//.catch(print);
+    }
 }
 
 // SCSS compilation
@@ -46,11 +44,13 @@ async function applyStyle() {
     console.log('[LOG] Styles loaded')
 }
 applyStyle().catch(print);
-
+globalThis.mybar = Bar;
+globalThis.appl = Applauncher;
+globalThis.mymonitors = JSON.parse(Utils.exec('hyprctl monitors -j'));
 const Windows = () => [
     // forMonitors(DesktopBackground),
-    Search(),
     Overview(),
+    Applauncher(),
     forMonitors(Indicator),
     forMonitors(Cheatsheet),
     SideLeft(),
@@ -58,13 +58,12 @@ const Windows = () => [
     forMonitors(Osk),
     Session(),
     userOptions.dock.enabled ? forMonitors(Dock) : null,
-    // forMonitors(Bar),
     ...(userOptions.appearance.fakeScreenRounding ? [
-        forMonitors((id) => Corner(id, 'top left', true)),
-        forMonitors((id) => Corner(id, 'top right', true)),
+        forMonitors((monitor_name) => Corner(monitor_name, 'top left', true)),
+        forMonitors((monitor_name) => Corner(monitor_name, 'top right', true)),
     ] : []),
-    forMonitors((id) => Corner(id, 'bottom left', userOptions.appearance.fakeScreenRounding)),
-    forMonitors((id) => Corner(id, 'bottom right', userOptions.appearance.fakeScreenRounding)),
+    forMonitors((monitor_name) => Corner(monitor_name, 'bottom left', userOptions.appearance.fakeScreenRounding)),
+    forMonitors((monitor_name) => Corner(monitor_name, 'bottom right', userOptions.appearance.fakeScreenRounding)),
     forMonitors(BarCornerTopleft),
     forMonitors(BarCornerTopright),
     forMonitors(Click2Close),
@@ -83,6 +82,5 @@ App.config({
     windows: Windows().flat(1),
 });
 
-// Stuff that don't need to be toggled. And they're async so ugh...
-forMonitorsAsync(Bar);
-// Bar().catch(print); // Use this to debug the bar. Single monitor only.
+// launching the bars 
+forMonitors(Bar);

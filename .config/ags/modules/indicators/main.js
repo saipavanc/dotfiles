@@ -4,10 +4,11 @@ import IndicatorValues from './indicatorvalues.js';
 import MusicControls from './musiccontrols.js';
 import ColorScheme from './colorscheme.js';
 import NotificationPopups from './notificationpopups.js';
+import { GdkMonitorFromName } from '../../workspace_specific_methods.js';
 
-export default (monitor = 0) => Widget.Window({
-    name: `indicator${monitor}`,
-    monitor,
+export default (monitor_name) => Widget.Window({
+    name: `indicator-${monitor_name}`,
+    gdkmonitor: GdkMonitorFromName(monitor_name),
     className: 'indicator',
     layer: 'overlay',
     // exclusivity: 'ignore',

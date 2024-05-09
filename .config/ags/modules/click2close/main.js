@@ -2,6 +2,7 @@ const { Gdk } = imports.gi;
 import Widget from 'resource:///com/github/Aylur/ags/widget.js';
 import PopupWindow from '../.widgethacks/popupwindow.js';
 import { SCREEN_HEIGHT, SCREEN_WIDTH } from '../../variables.js';
+import { GdkMonitorFromName } from '../../workspace_specific_methods.js';
 
 const WINDOWS_NEED_CLICK2CLOSE = [
     'sideleft', 'sideright', 'overview', 'cheatsheet', 'applauncher'
@@ -9,9 +10,9 @@ const WINDOWS_NEED_CLICK2CLOSE = [
 
 const range = (length, start = 1) => Array.from({ length }, (_, i) => i + start);
 
-export default (monitor = 0) => PopupWindow({
-    monitor,
-    name: `click2close${monitor}`,
+export default (monitor_name) => PopupWindow({
+    gdkmonitor: GdkMonitorFromName(monitor_name),
+    name: `click2close-${monitor_name}`,
     layer: 'top',
     anchor: ['top', 'bottom', 'left', 'right'],
     exclusivity: 'ignore',

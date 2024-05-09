@@ -117,15 +117,15 @@ const AppButton = ({ icon, ...rest }) => Widget.Revealer({
     })
 });
 
-const Taskbar = (monitor) => Widget.Box({
+const Taskbar = (monitor_name) => Widget.Box({
     className: 'dock-apps',
     attribute: {
-        monitor: monitor,
+        monitor_name: monitor_name,
         'map': new Map(),
         'clientSortFunc': (a, b) => {
             return a.attribute.workspace > b.attribute.workspace;
         },
-        'update': (box, monitor) => {
+        'update': (box, monitor_name) => {
             for (let i = 0; i < Hyprland.clients.length; i++) {
                 const client = Hyprland.clients[i];
                 if (client["pid"] == -1) return;
@@ -153,7 +153,7 @@ const Taskbar = (monitor) => Widget.Box({
             }
             box.children = Array.from(box.attribute.map.values());
         },
-        'add': (box, address, monitor) => {
+        'add': (box, address, monitor_name) => {
             if (!address) { // First active emit is undefined
                 box.attribute.update(box);
                 return;
@@ -196,8 +196,8 @@ const Taskbar = (monitor) => Widget.Box({
         },
     },
     setup: (self) => {
-        self.hook(Hyprland, (box, address) => box.attribute.add(box, address, self.monitor), 'client-added')
-            .hook(Hyprland, (box, address) => box.attribute.remove(box, address, self.monitor), 'client-removed')
+        self.hook(Hyprland, (box, address) => box.attribute.add(box, address, self.monitor_name), 'client-added')
+            .hook(Hyprland, (box, address) => box.attribute.remove(box, address, self.monitor_name), 'client-removed')
         Utils.timeout(100, () => self.attribute.update(self));
     },
 });
@@ -241,7 +241,7 @@ const PinnedApps = () => Widget.Box({
         }),
 });
 
-export default (monitor = 0) => {
+export default (monitor_name) => {
     const dockContent = Box({
         className: 'dock-bg spacing-h-5',
         children: [
@@ -294,7 +294,7 @@ export default (monitor = 0) => {
                 // // }
 
                 if (userOptions.dock.monitorExclusivity)
-                    self.revealChild = Hyprland.active.monitor.id === monitor;
+                    self.revealChild = Hyprland.active.monitor.name === monitor_name;
                 else
                     self.revealChild = true;
 

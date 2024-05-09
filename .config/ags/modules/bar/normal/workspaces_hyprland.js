@@ -14,30 +14,30 @@ const dummyActiveWs = Box({ className: 'bar-ws bar-ws-active' }); // Not shown. 
 const dummyOccupiedWs = Box({ className: 'bar-ws bar-ws-occupied' }); // Not shown. Only for getting size props
 
 // Font size = workspace id
-const WorkspaceContents = (monitor_id) => {
+const WorkspaceContents = (monitor_name) => {
     return DrawingArea({
         // css: `transition: 300ms cubic-bezier(0.1, 1, 0, 1);`,
         attribute: {
             initialized: false,
             workspaceMask: 0,
             workspaceGroup: 0,
-            workspaceCount: Hyprland.workspaces.filter(ws => ws.monitorID === monitor_id).length,
+            workspaceCount: Hyprland.workspaces.filter(ws => ws.monitor === monitor_name).length,
+            monitor_name: monitor_name,
             updateMask: (self) => {
                 // if (self.attribute.initialized) return; // We only need this to run once
-                const workspaces = Hyprland.workspaces.filter(ws => ws.monitorID === monitor_id);// get workspaces for the current monitor
-                self.workspaceCount = workspaces.length;
-                const offset = Math.floor((Hyprland.active.workspace.id - 1) / self.workspaceCount) * self.workspaceCount;
-                // if (!workspaces.includes(Hyprland.active.workspace)) return;
-
+                const workspaces = Hyprland.workspaces.filter(ws => ws.monitor === monitor_name);// get workspaces for the current monitor
+                const offset = workspaces[0].id - 1 //Math.floor((Hyprland.active.workspace.id - 1) / self.attribute.workspaceCount) * self.attribute.workspaceCount;
+                if (self.attribute.monitor_name !== Hyprland.active.monitor.name) return; // No workspaces, ignore
+                // workspaceMask determines which workspaces are highlighted
                 let workspaceMask = 0;
-                for (let i = 0; i < workspaces.length; i++) {
-                    const ws = workspaces[i];
-                    if (ws.id <= offset || ws.id > offset + self.workspaceCount) continue; // Out of range, ignore
-                    if (workspaces[i].windows > 0)
+                for (const ws of workspaces) {
+                    // if (ws.id <= offset || ws.id > offset + workspaces.length) continue; // Out of range, ignore
+                    if (ws.windows > 0) // highlight the workspace if it has windows
                         workspaceMask |= (1 << (ws.id - offset));
                 }
                 // console.log('Mask:', workspaceMask.toString(2));
                 self.attribute.workspaceMask = workspaceMask;
+
                 // self.attribute.initialized = true;
                 self.queue_draw();
             },
@@ -49,9 +49,12 @@ const WorkspaceContents = (monitor_id) => {
         },
         setup: (area) => area
             .hook(Hyprland.active.workspace, (self) => {
-                self.setCss(`font-size: ${(Hyprland.active.workspace.id - 1) % self.workspaceCount + 1}px;`);
+                // Do not update when going to a different monitor
+                // if (self.attribute.monitor_name !== Hyprland.active.monitor.name) return;
+
+                self.setCss(`font-size: ${(Hyprland.active.workspace.id - 1) % self.attribute.workspaceCount + 1}px;`);
                 const previousGroup = self.attribute.workspaceGroup;
-                const currentGroup = Math.floor((Hyprland.active.workspace.id - 1) / self.workspaceCount);
+                const currentGroup = Math.floor((Hyprland.active.workspace.id - 1) / self.attribute.workspaceCount);
                 if (currentGroup !== previousGroup) {
                     self.attribute.updateMask(self);
                     self.attribute.workspaceGroup = currentGroup;
@@ -59,8 +62,10 @@ const WorkspaceContents = (monitor_id) => {
             })
             .hook(Hyprland, (self) => self.attribute.updateMask(self), 'notify::workspaces')
             .on('draw', Lang.bind(area, (area, cr) => {
-                const workspaceCount = Hyprland.workspaces.filter(ws => ws.monitorID === monitor_id).length;
-                const offset = Math.floor((Hyprland.active.workspace.id - 1) / workspaceCount) * workspaceCount;
+                // const offset = Math.floor((Hyprland.active.workspace.id - 1) / area.attribute.workspaceCount) * area.attribute.workspaceCount;
+
+                const workspaces = Hyprland.workspaces.filter(ws => ws.monitor === monitor_name);// get workspaces for the current monitor
+                const offset = workspaces[0].id - 1
 
                 const allocation = area.get_allocation();
                 const { width, height } = allocation;
@@ -80,12 +85,8 @@ const WorkspaceContents = (monitor_id) => {
                 const activeWorkspaceStyleContext = dummyActiveWs.get_style_context();
                 const activebg = activeWorkspaceStyleContext.get_property('background-color', Gtk.StateFlags.NORMAL);
                 const activefg = activeWorkspaceStyleContext.get_property('color', Gtk.StateFlags.NORMAL);
-                area.set_size_request(workspaceDiameter * workspaceCount, -1);
+                area.set_size_request(workspaceDiameter * area.attribute.workspaceCount, -1);
                 const widgetStyleContext = area.get_style_context();
-                const activeWs = widgetStyleContext.get_property('font-size', Gtk.StateFlags.NORMAL);
-
-                const activeWsCenterX = -(workspaceDiameter / 2) + (workspaceDiameter * activeWs);
-                const activeWsCenterY = height / 2;
 
                 // Font
                 const layout = PangoCairo.create_layout(cr);
@@ -93,13 +94,13 @@ const WorkspaceContents = (monitor_id) => {
                 layout.set_font_description(fontDesc);
                 cr.setAntialias(Cairo.Antialias.BEST);
                 // Get kinda min radius for number indicators
-                layout.set_text("0".repeat(workspaceCount.toString().length), -1);
+                layout.set_text("0".repeat(area.attribute.workspaceCount.toString().length), -1);
                 const [layoutWidth, layoutHeight] = layout.get_pixel_size();
                 const indicatorRadius = Math.max(layoutWidth, layoutHeight) / 2 * 1.2; // a bit smaller than sqrt(2)*radius
                 const indicatorGap = workspaceRadius - indicatorRadius;
 
                 // Draw workspace numbers
-                for (let i = 1; i <= workspaceCount; i++) {
+                for (let i = 1; i <= area.attribute.workspaceCount; i++) {
                     if (area.attribute.workspaceMask & (1 << i)) {
                         // Draw bg highlight
                         cr.setSourceRGBA(occupiedbg.red, occupiedbg.green, occupiedbg.blue, occupiedbg.alpha);
@@ -137,7 +138,10 @@ const WorkspaceContents = (monitor_id) => {
                     cr.stroke();
                 }
 
-                // Draw active ws
+                // Draw active ws for the current monitor
+                const activeWs = JSON.parse(Utils.exec('hyprctl monitors -j')).find(monitor => monitor.name === monitor_name).activeWorkspace.id - offset;
+                const activeWsCenterX = -(workspaceDiameter / 2) + (workspaceDiameter * activeWs);
+                const activeWsCenterY = height / 2;
                 // base
                 cr.setSourceRGBA(activebg.red, activebg.green, activebg.blue, activebg.alpha);
                 cr.arc(activeWsCenterX, activeWsCenterY, indicatorRadius, 0, 2 * Math.PI);
@@ -151,7 +155,7 @@ const WorkspaceContents = (monitor_id) => {
     })
 }
 
-export default (monitor_id) => EventBox({
+export default (monitor_name) => EventBox({
     onScrollUp: () => Hyprland.messageAsync(`dispatch workspace -1`).catch(print),
     onScrollDown: () => Hyprland.messageAsync(`dispatch workspace +1`).catch(print),
     onMiddleClick: () => toggleWindowOnAllMonitors('osk'),
@@ -166,7 +170,7 @@ export default (monitor_id) => EventBox({
         children: [Box({
             className: 'bar-group bar-group-standalone bar-group-pad',
             css: 'min-width: 2px;',
-            children: [WorkspaceContents(monitor_id)],
+            children: [WorkspaceContents(monitor_name)],
         })]
     }),
     setup: (self) => {

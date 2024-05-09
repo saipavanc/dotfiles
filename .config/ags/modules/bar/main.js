@@ -9,10 +9,11 @@ import System from "./normal/system.js";
 import { enableClickthrough } from "../.widgetutils/clickthrough.js";
 import { RoundedCorner } from "../.commonwidgets/cairo_roundedcorner.js";
 import { currentShellMode } from '../../variables.js';
+import { GdkMonitorFromName } from '../../workspace_specific_methods.js';
 
-const NormalOptionalWorkspaces = async (monitor_id=0) => {
+const NormalOptionalWorkspaces = async (monitor_name) => {
     try {
-        return (await import('./normal/workspaces_hyprland.js')).default(monitor_id);
+        return (await import('./normal/workspaces_hyprland.js')).default(monitor_name);
     } catch {
         try {
             return (await import('./normal/workspaces_sway.js')).default();
@@ -34,7 +35,7 @@ const FocusOptionalWorkspaces = async () => {
     }
 };
 
-export const Bar = async (monitor_id = 0) => {
+export const Bar = async (monitor_name) => {
     const SideModule = (children) => Widget.Box({
         className: 'bar-sidemodule',
         children: children,
@@ -53,7 +54,7 @@ export const Bar = async (monitor_id = 0) => {
                 SideModule([Music()]),
                 Widget.Box({
                     homogeneous: true,
-                    children: [await NormalOptionalWorkspaces(monitor_id)],
+                    children: [await NormalOptionalWorkspaces(monitor_name)],
                 }),
                 SideModule([System()]),
             ]
@@ -83,8 +84,8 @@ export const Bar = async (monitor_id = 0) => {
         }
     });
     return Widget.Window({
-        monitor: monitor_id,
-        name: `bar${monitor_id}`,
+        gdkmonitor: GdkMonitorFromName(monitor_name),
+        name: `bar-${monitor_name}`,
         anchor: ['top', 'left', 'right'],
         exclusivity: 'exclusive',
         visible: true,
@@ -103,9 +104,9 @@ export const Bar = async (monitor_id = 0) => {
     });
 }
 
-export const BarCornerTopleft = (monitor = 0) => Widget.Window({
-    monitor,
-    name: `barcornertl${monitor}`,
+export const BarCornerTopleft = (monitor_name) => Widget.Window({
+    gdkmonitor: GdkMonitorFromName(monitor_name),
+    name: `barcornertl-${monitor_name}`,
     layer: 'top',
     anchor: ['top', 'left'],
     exclusivity: 'normal',
@@ -113,9 +114,9 @@ export const BarCornerTopleft = (monitor = 0) => Widget.Window({
     child: RoundedCorner('topleft', { className: 'corner', }),
     setup: enableClickthrough,
 });
-export const BarCornerTopright = (monitor = 0) => Widget.Window({
-    monitor,
-    name: `barcornertr${monitor}`,
+export const BarCornerTopright = (monitor_name) => Widget.Window({
+    gdkmonitor: GdkMonitorFromName(monitor_name),
+    name: `barcornertr-${monitor_name}`,
     layer: 'top',
     anchor: ['top', 'right'],
     exclusivity: 'normal',

@@ -13,8 +13,9 @@ import App from 'resource:///com/github/Aylur/ags/app.js'
 import * as Utils from 'resource:///com/github/Aylur/ags/utils.js'
 // Stuff
 import userOptions from './modules/.configuration/user_options.js';
+import Applauncher from './modules/overview/main_search.js';
 // Widgets
-import Overview from './modules/overview/main.js';
+import Overview from './modules/overview/main_overview.js';
 
 Utils.exec(`bash -c 'echo "" > ${App.configDir}/scss/_musicwal.scss'`); // reset music styles
 Utils.exec(`bash -c 'echo "" > ${App.configDir}/scss/_musicmaterial.scss'`); // reset music styles
@@ -33,6 +34,7 @@ App.config({
     stackTraceOnError: true,
     windows: [
         Overview(),
+        Applauncher(),
     ],
 });
 
