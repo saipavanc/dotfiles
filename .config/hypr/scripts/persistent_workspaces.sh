@@ -49,7 +49,7 @@ while getopts ${OPTSTRING} option; do
 		exit;;
      i) # initiate workspaces
       # initialize all the workspaces
-      for N in {1..15}; do hyprctl dispatch workspace $N; done; notify-send "Workspaces initiated!"
+      for N in {1..10}; do hyprctl dispatch workspace $N; done; notify-send "Workspaces initiated!"
       exit;;	
 	  \?) # invalid option
 	 	echo "Invlaid option"
