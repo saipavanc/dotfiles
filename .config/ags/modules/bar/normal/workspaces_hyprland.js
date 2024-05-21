@@ -163,6 +163,7 @@ export default (monitor_name) => EventBox({
     attribute: {
         clicked: false,
         ws_group: 0,
+        workspaceCount: Hyprland.workspaces.filter(ws => ws.monitor === monitor_name).length,
     },
     child: Box({
         homogeneous: true,
@@ -179,8 +180,8 @@ export default (monitor_name) => EventBox({
             if (!self.attribute.clicked) return;
             const [_, cursorX, cursorY] = event.get_coords();
             const widgetWidth = self.get_allocation().width;
-            const wsId = Math.ceil(cursorX * self.workspaceCount / widgetWidth);
-            Utils.execAsync([`${App.configDir}/scripts/hyprland/workspace_action.sh`, 'workspace', `${wsId}`])
+            const wsId = Math.ceil(cursorX * self.attribute.workspaceCount / widgetWidth);
+            Utils.execAsync([`${App.configDir}/../hypr/scripts/persistent_workspaces.sh`, '-s', `${wsId}`])
                 .catch(print);
         })
         self.on('button-press-event', (self, event) => {
@@ -188,8 +189,8 @@ export default (monitor_name) => EventBox({
                 self.attribute.clicked = true;
                 const [_, cursorX, cursorY] = event.get_coords();
                 const widgetWidth = self.get_allocation().width;
-                const wsId = Math.ceil(cursorX * self.workspaceCount / widgetWidth);
-                Utils.execAsync([`${App.configDir}/scripts/hyprland/workspace_action.sh`, 'workspace', `${wsId}`])
+                const wsId = Math.ceil(cursorX * self.attribute.workspaceCount / widgetWidth);
+                Utils.execAsync([`${App.configDir}/../hypr/scripts/persistent_workspaces.sh`, '-s', `${wsId}`])
                     .catch(print);
             }
             else if (event.get_button()[1] === 8) {
