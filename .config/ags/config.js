@@ -83,4 +83,5 @@ App.config({
 });
 
 // launching the bars 
+// works only for one monitor
 forMonitors(Bar);
