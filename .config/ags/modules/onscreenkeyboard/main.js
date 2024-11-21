@@ -1,10 +1,11 @@
 import PopupWindow from '../.widgethacks/popupwindow.js';
 import OnScreenKeyboard from "./onscreenkeyboard.js";
+import { GdkMonitorFromName } from '../../workspace_specific_methods.js';
 
-export default (monitor_name) => PopupWindow({
+export default () => PopupWindow({
     anchor: ['bottom'],
-    name: `osk${monitor_name}`,
+    name: `osk`,
     showClassName: 'osk-show',
     hideClassName: 'osk-hide',
-    child: OnScreenKeyboard({ monitor_name: monitor_name }),
+    child: OnScreenKeyboard(),
 });

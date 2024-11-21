@@ -1,7 +1,7 @@
 // This is for the cool memory indicator on the sidebar
 // For the right pill of the bar, see system.js
 const { Gdk, Gtk } = imports.gi;
-import { SCREEN_HEIGHT, SCREEN_WIDTH } from '../../variables.js';
+import { getMonitorProperty } from '../../variables.js';
 import App from 'resource:///com/github/Aylur/ags/app.js';
 import Widget from 'resource:///com/github/Aylur/ags/widget.js';
 import * as Utils from 'resource:///com/github/Aylur/ags/utils.js';
@@ -59,7 +59,7 @@ const SessionButton = (name, icon, command, props = {}, colorid = 0) => {
     });
 }
 
-export default ({ id = '' }) => {
+export default () => {
     // lock, logout, sleep
     const lockButton = SessionButton('Lock', 'lock', () => { App.closeWindow(`session${id}`); execAsync(['loginctl', 'lock-session']).catch(print) }, {}, 1);
     const logoutButton = SessionButton('Logout', 'logout', () => { App.closeWindow(`session${id}`); execAsync(['bash', '-c', 'pkill Hyprland || pkill sway || pkill niri || loginctl terminate-user $USER']).catch(print) }, {}, 2);
@@ -98,15 +98,15 @@ export default ({ id = '' }) => {
     return Widget.Box({
         className: 'session-bg',
         css: `
-        min-width: ${SCREEN_WIDTH}px;
-        min-height: ${SCREEN_HEIGHT}px;
+        min-width: ${getMonitorProperty("width")}px;
+        min-height: ${getMonitorProperty("height")}px;
         `, // idk why but height = screen height doesn't fill
         vertical: true,
         children: [
             Widget.EventBox({
-                onPrimaryClick: () => App.closeWindow(`session${id}`),
-                onSecondaryClick: () => App.closeWindow(`session${id}`),
-                onMiddleClick: () => App.closeWindow(`session${id}`),
+                onPrimaryClick: () => App.closeWindow(`session`),
+                onSecondaryClick: () => App.closeWindow(`session`),
+                onMiddleClick: () => App.closeWindow(`session`),
             }),
             Widget.Box({
                 hpack: 'center',

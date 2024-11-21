@@ -83,8 +83,8 @@ export const sheetContent = ExpandingIconTabContainer({
     }
 });
 
-export default (monitor_name) => PopupWindow({
-    name: `cheatsheet-${monitor_name}`,
+export default () => PopupWindow({
+    name: `cheatsheet`,
     layer: 'overlay',
     keymode: 'exclusive',
     visible: false,

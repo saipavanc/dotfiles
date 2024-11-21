@@ -44,18 +44,15 @@ async function applyStyle() {
     console.log('[LOG] Styles loaded')
 }
 applyStyle().catch(print);
-globalThis.mybar = Bar;
-globalThis.appl = Applauncher;
-globalThis.mymonitors = JSON.parse(Utils.exec('hyprctl monitors -j'));
+
 const Windows = () => [
     // forMonitors(DesktopBackground),
-    Overview(),
     Applauncher(),
     forMonitors(Indicator),
-    forMonitors(Cheatsheet),
+    Cheatsheet(),
     SideLeft(),
     SideRight(),
-    forMonitors(Osk),
+    Osk(),
     Session(),
     userOptions.dock.enabled ? forMonitors(Dock) : null,
     ...(userOptions.appearance.fakeScreenRounding ? [
@@ -66,14 +63,16 @@ const Windows = () => [
     forMonitors((monitor_name) => Corner(monitor_name, 'bottom right', userOptions.appearance.fakeScreenRounding)),
     forMonitors(BarCornerTopleft),
     forMonitors(BarCornerTopright),
-    forMonitors(Click2Close),
+    forMonitors(Overview),
+    Click2Close(),
 ];
 
 const CLOSE_ANIM_TIME = 210; // Longer than actual anim time to make sure widgets animate fully
 const closeWindowDelays = {}; // For animations
-for (let i = 0; i < (Gdk.Display.get_default()?.get_n_monitors() || 1); i++) {
-    closeWindowDelays[`osk${i}`] = CLOSE_ANIM_TIME;
-}
+// for (let i = 0; i < (Gdk.Display.get_default()?.get_n_monitors() || 1); i++) {
+//     closeWindowDelays[`osk${i}`] = CLOSE_ANIM_TIME;
+// }
+closeWindowDelays[`osk`] = CLOSE_ANIM_TIME;
 
 App.config({
     css: `${COMPILED_STYLE_DIR}/style.css`,
@@ -84,3 +83,20 @@ App.config({
 
 // launching the bars 
 forMonitors(Bar);
+// Bar("DP-7");
+
+//////////////// Code to help with windows when monitors are removed //////////////////////
+// config.js
+// const hyprland = await Service.import("hyprland")
+
+// // some config...
+// const ags_reset_command = "bash -c 'killall ags; ags'"
+// hyprland.connect("monitor-added", (_hypr, monitor) => {
+//     Utils.execAsync(ags_reset_command).catch(print)
+// })
+
+// hyprland.connect("monitor-removed", (_hypr, monitor) => {
+//     Utils.execAsync(ags_reset_command).catch(print)
+// })
+
+/////////////////////////////////////////////////////////////////

@@ -1,5 +1,5 @@
 const { Gtk, GLib } = imports.gi;
-import { SCREEN_HEIGHT, SCREEN_WIDTH } from '../../variables.js';
+import { getMonitorProperty } from '../../variables.js';
 import Widget from 'resource:///com/github/Aylur/ags/widget.js';
 import * as Utils from 'resource:///com/github/Aylur/ags/utils.js';
 const { EventBox, Button } = Widget;
@@ -241,8 +241,8 @@ export default (monitor_name) => {
                 //     dockContent.get_allocated_height()
                 // ]
                 // const dockAt = [
-                //     SCREEN_WIDTH / 2 - dockSize[0] / 2,
-                //     SCREEN_HEIGHT - dockSize[1],
+                //     getMonitorProperty("width") / 2 - dockSize[0] / 2,
+                //     getMonitorProperty("height") - dockSize[1],
                 // ];
                 // const dockLeft = dockAt[0];
                 // const dockRight = dockAt[0] + dockSize[0];

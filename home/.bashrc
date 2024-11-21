@@ -47,11 +47,11 @@ fi
 # cat ~/.cache/wal/sequences
 
 # -----------------------------------------------------
-# PFETCH if on wm
+# FASTFETCH if on wm
 # -----------------------------------------------------
 echo ""
 if [[ $(tty) == *"pts"* ]]; then
-    pfetch
+    fastfetch
 else
     if [ -f /bin/qtile ]; then
         echo "Start Qtile X11 with command Qtile"

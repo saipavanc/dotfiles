@@ -188,6 +188,9 @@ const CoverArt = ({ player, ...rest }) => {
 
                 const coverPath = player.coverPath;
                 const stylePath = `${player.coverPath}${darkMode.value ? '' : '-l'}${COVER_COLORSCHEME_SUFFIX}`;
+                if (coverPath == null) {
+                    return;
+                }
                 if (player.coverPath == lastCoverPath) { // Since 'notify::cover-path' emits on cover download complete
                     Utils.timeout(200, () => {
                         // self.attribute.showImage(self, coverPath);
@@ -203,6 +206,7 @@ const CoverArt = ({ player, ...rest }) => {
                     App.applyCss(stylePath);
                     return;
                 }
+                globalThis.coverpath = coverPath;
 
                 // Generate colors
                 execAsync(['bash', '-c',

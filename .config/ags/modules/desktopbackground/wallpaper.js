@@ -1,7 +1,7 @@
 const { Gdk, GdkPixbuf, Gio, GLib, Gtk } = imports.gi;
 import Widget from 'resource:///com/github/Aylur/ags/widget.js';
 import * as Utils from 'resource:///com/github/Aylur/ags/utils.js';
-import { SCREEN_HEIGHT, SCREEN_WIDTH } from '../../variables.js';
+import { getMonitorProperty } from '../../variables.js';
 const { exec, execAsync } = Utils;
 const { Box, Button, Label, Stack } = Widget;
 import Hyprland from 'resource:///com/github/Aylur/ags/service/hyprland.js';
@@ -16,8 +16,8 @@ const SWITCHWALL_SCRIPT_PATH = `${App.configDir}/scripts/color_generation/switch
 const WALLPAPER_ZOOM_SCALE = 1.25; // For scrolling when we switch workspace
 const MAX_WORKSPACES = 10;
 
-const WALLPAPER_OFFSCREEN_X = (WALLPAPER_ZOOM_SCALE - 1) * SCREEN_WIDTH;
-const WALLPAPER_OFFSCREEN_Y = (WALLPAPER_ZOOM_SCALE - 1) * SCREEN_HEIGHT;
+const WALLPAPER_OFFSCREEN_X = (WALLPAPER_ZOOM_SCALE - 1) * getMonitorProperty("width");
+const WALLPAPER_OFFSCREEN_Y = (WALLPAPER_ZOOM_SCALE - 1) * getMonitorProperty("height");
 
 
 export default (monitor = 0) => {
@@ -33,7 +33,7 @@ export default (monitor = 0) => {
         },
         className: 'bg-wallpaper-transition',
         setup: (self) => {
-            self.set_size_request(SCREEN_WIDTH, SCREEN_HEIGHT);
+            self.set_size_request(getMonitorProperty("width"), getMonitorProperty("height"));
             self
                 // TODO: reduced updates using timeouts to reduce lag
                 // .hook(Hyprland.active.workspace, (self) => {
@@ -61,8 +61,8 @@ export default (monitor = 0) => {
                     if (!wallPath || wallPath === "") return;
                     self.attribute.pixbuf = GdkPixbuf.Pixbuf.new_from_file(wallPath);
 
-                    const scale_x = SCREEN_WIDTH * WALLPAPER_ZOOM_SCALE / self.attribute.pixbuf.get_width();
-                    const scale_y = SCREEN_HEIGHT * WALLPAPER_ZOOM_SCALE / self.attribute.pixbuf.get_height();
+                    const scale_x = getMonitorProperty("width") * WALLPAPER_ZOOM_SCALE / self.attribute.pixbuf.get_width();
+                    const scale_y = getMonitorProperty("height") * WALLPAPER_ZOOM_SCALE / self.attribute.pixbuf.get_height();
                     const scale_factor = Math.max(scale_x, scale_y);
 
                     self.attribute.pixbuf = self.attribute.pixbuf.scale_simple(
@@ -86,7 +86,7 @@ export default (monitor = 0) => {
                 hpack: 'center',
                 justification: 'center',
                 className: 'txt-large',
-                label: `No wallpaper loaded.\nAn image ≥ ${SCREEN_WIDTH * WALLPAPER_ZOOM_SCALE} × ${SCREEN_HEIGHT * WALLPAPER_ZOOM_SCALE} is recommended.`,
+                label: `No wallpaper loaded.\nAn image ≥ ${getMonitorProperty("width") * WALLPAPER_ZOOM_SCALE} × ${getMonitorProperty("height") * WALLPAPER_ZOOM_SCALE} is recommended.`,
             }),
             Button({
                 hpack: 'center',

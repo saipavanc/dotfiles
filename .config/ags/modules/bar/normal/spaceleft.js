@@ -3,7 +3,7 @@ import Widget from 'resource:///com/github/Aylur/ags/widget.js';
 import Brightness from '../../../services/brightness.js';
 import Indicator from '../../../services/indicator.js';
 
-const WindowTitle = async () => {
+const WindowTitle = async (monitor_name) => {
     try {
         const Hyprland = (await import('resource:///com/github/Aylur/ags/service/hyprland.js')).default;
         return Widget.Scrollable({
@@ -17,8 +17,20 @@ const WindowTitle = async () => {
                         truncate: 'end',
                         maxWidthChars: 10, // Doesn't matter, just needs to be non negative
                         className: 'txt-smaller bar-wintitle-topdesc txt',
-                        setup: (self) => self.hook(Hyprland.active.client, label => { // Hyprland.active.client
+                        setup: (self) => self
+                        
+                        .hook(Hyprland.active.client, label => { // Hyprland.active.client
+                            // const monitor = Hyprland.monitors.find(monitor => monitor.name === monitor_name);
+                            // const current_workspace = Hyprland.getWorkspace(monitor.activeWorkspace.id);
+                            // const current_client = Hyprland.getClient(current_workspace.lastwindow);
+                            // console.log(current_client.class);
+
+                            // if (Hyprland.active.monitor.name !== monitor_name) return;
+
+                            // active_client = Hyprland.getClient(current_workspace.lastwindow).class;
                             label.label = Hyprland.active.client.class.length === 0 ? 'Desktop' : Hyprland.active.client.class;
+                            // label.label = Hyprland.active.client.class.length === 0 ? 'Desktop' : Hyprland.active.client.class;
+                            // label.label = current_client.class.length === 0 ? 'Desktop' : current_client.class;
                         }),
                     }),
                     Widget.Label({
@@ -39,8 +51,8 @@ const WindowTitle = async () => {
 }
 
 
-export default async () => {
-    const optionalWindowTitleInstance = await WindowTitle();
+export default async (monitor_name) => {
+    const optionalWindowTitleInstance = await WindowTitle(monitor_name);
     return Widget.EventBox({
         onScrollUp: () => {
             Indicator.popup(1); // Since the brightness and speaker are both on the same window

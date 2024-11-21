@@ -1,7 +1,7 @@
 const { Gdk } = imports.gi;
 import Widget from 'resource:///com/github/Aylur/ags/widget.js';
 import PopupWindow from '../.widgethacks/popupwindow.js';
-import { SCREEN_HEIGHT, SCREEN_WIDTH } from '../../variables.js';
+import { getMonitorProperty } from '../../variables.js';
 import { GdkMonitorFromName } from '../../workspace_specific_methods.js';
 
 const WINDOWS_NEED_CLICK2CLOSE = [
@@ -9,10 +9,11 @@ const WINDOWS_NEED_CLICK2CLOSE = [
 ];
 
 const range = (length, start = 1) => Array.from({ length }, (_, i) => i + start);
+const monitors = JSON.parse(Utils.exec('hyprctl monitors -j'));
 
-export default (monitor_name) => PopupWindow({
-    gdkmonitor: GdkMonitorFromName(monitor_name),
-    name: `click2close-${monitor_name}`,
+export default () => PopupWindow({
+    // gdkmonitor: GdkMonitorFromName(monitor_name),
+    name: `click2close`,
     layer: 'top',
     anchor: ['top', 'bottom', 'left', 'right'],
     exclusivity: 'ignore',
@@ -36,16 +37,18 @@ export default (monitor_name) => PopupWindow({
         onMiddleClick: () => closeEverything(),
         setup: (self) => self.hook(App, (self, currentName, visible) => {
             if(!self.attribute.checkWindowRelevance(currentName)) return;
-            range(Gdk.Display.get_default()?.get_n_monitors() || 1, 0).forEach(id => {
-                if(visible) App.openWindow(`click2close${id}`);
-                else App.closeWindow(`click2close${id}`);
-            });
+            if(visible) {
+                App.openWindow(`click2close`);
+            }
+            else {
+                App.closeWindow(`click2close`);
+            }
         }),
         child: Widget.Box({
             css: `
                 ${userOptions.appearance.layerSmoke ? 'background-color: rgba(0,0,0,' + String(userOptions.appearance.layerSmokeStrength) + ');' : ''}
-                min-height: ${SCREEN_HEIGHT}px;
-                min-width: ${SCREEN_WIDTH}px;
+                min-height: ${getMonitorProperty("width")}px;
+                min-width: ${getMonitorProperty("height")}px;
             `
         }),
     })
