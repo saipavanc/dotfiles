@@ -171,7 +171,6 @@ class MetricsSmall(Overlay):
             start_angle=150,
             end_angle=390,
             style_classes="cpu",
-            child=self.cpu_icon,
         )
         self.cpu_circle_overlay = Box(
                     children= [Overlay(
@@ -284,7 +283,7 @@ class MetricsSmall(Overlay):
         )
 
         # Actualización de métricas cada segundo
-        # GLib.timeout_add_seconds(1, self.update)
+        # GLib.timeout_add_seconds(1, self.update_metrics)
 
         # Estado inicial de los revealers y variables para la gestión del hover
         self.hide_timer = None
@@ -324,8 +323,8 @@ class MetricsSmall(Overlay):
     def update(self):
         # Recuperar datos centralizados
         cpu, mem, disk = shared_provider.get_metrics()
-        # self.cpu_circle.set_value(cpu / 100.0)
-        # self.ram_circle.set_value(mem / 100.0)
+        self.cpu_circle.set_value(cpu / 100.0)
+        self.ram_circle.set_value(mem / 100.0)
         # self.disk_circle.set_value(disk / 100.0)
         # Actualizar etiquetas con el porcentaje formateado
         self.cpu_level.set_label(self._format_percentage(int(cpu)))
