@@ -171,7 +171,6 @@ class MetricsSmall(Overlay):
             start_angle=150,
             end_angle=390,
             style_classes="cpu",
-            child=self.cpu_icon,
         )
         self.cpu_circle_overlay = Box(
                     children= [Overlay(
