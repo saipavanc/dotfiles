@@ -3,7 +3,7 @@
 case "$(pidof obs | wc -l)" in
 
 0)  notify-send "Starting OBS virtual cam for screen share..."
-    flatpak run com.obsproject.Studio --startvirtualcam --minimize-to-tray
+    obs --startvirtualcam --minimize-to-tray
     ;;
 1)  notify-send "Stopping OBS virtual cam."
 	kill -2 $(pidof obs)

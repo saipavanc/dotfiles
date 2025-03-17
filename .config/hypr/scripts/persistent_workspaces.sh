@@ -42,14 +42,14 @@ while getopts ${OPTSTRING} option; do
         Help
         exit;;
       n) # move to next workspace
-		if [[ $workspace_in_persistent_workspaces == 1 ]]; then hyprctl dispatch split-workspace r+1; fi
+		if [[ $workspace_in_persistent_workspaces == 1 ]]; then hyprctl dispatch workspace r+1; fi
 		exit;;
 	  s) # switch to the workspace given in argument 
-		if [[ $OPTARG -le $number_of_workspaces ]]; then hyprctl dispatch split-workspace $OPTARG; fi
+		if [[ $OPTARG -le $number_of_workspaces ]]; then hyprctl dispatch workspace $OPTARG; fi
 		exit;;
      i) # initiate workspaces
       # initialize all the workspaces
-      for N in {1..15}; do hyprctl dispatch workspace $N; done; notify-send "Workspaces initiated!"
+      for N in {1..10}; do hyprctl dispatch workspace $N; done; notify-send "Workspaces initiated!"
       exit;;	
 	  \?) # invalid option
 	 	echo "Invlaid option"
