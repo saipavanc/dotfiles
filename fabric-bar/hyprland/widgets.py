@@ -470,7 +470,6 @@ class ActiveWindow(Button):
         if event.button != 3:
             return
         # make a context menu for this button
-        print("Right clicked on the active window")
         self.cmenu.popup_at_pointer()
         # return logger.info("[ActiveWindow] Right clicked on the active window")
     

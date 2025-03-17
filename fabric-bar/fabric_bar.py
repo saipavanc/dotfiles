@@ -35,7 +35,7 @@ def initialize_widgets():
     bars = []
     # bars.append(StatusBar(monitor_name="HDMI-A-1"))
     for monitor in get_all_monitors().values():
-        show_system_tray = monitor == "eDP-1" # only show system tray on the laptop monitor
+        show_system_tray = monitor == "DP-3" # only show system tray on the small monitor
         bars.append(StatusBar(monitor_name=monitor, show_system_tray=show_system_tray))
     
     side_panel = SidePanel(name="side-panel")
