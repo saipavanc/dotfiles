@@ -1,0 +1,307 @@
+/* we can use webcss variables, fabric compiles that to gtk css.
+   global variables can be stored in :vars */
+   :vars {
+    --background: #150d16;
+    --foreground: #f5dbc4;
+    --color0: #150d16;
+    --color1: #72448D;
+    --color2: #9C5995;
+    --color3: #D5719F;
+    --color4: #9A62F3;
+    --color5: #a12e9f;
+    --color6: #F98F9F;
+    --color7: #f5dbc4;
+    --color8: #ab9989;
+    --color9: #72448D;
+    --color10: #9C5995;
+    --color11: #D5719F;
+    --color12: #9A62F3;
+    --color13: #E075DF;
+    --color14: #F98F9F;
+    --color15: #f5dbc4;
+    --window-bg: alpha(var(--background), 0.6);
+    --module-bg: alpha(var(--background), 0.4);
+    --border-color: var(--color1);
+    --ws-active: var(--color9);
+    --ws-inactive: var(--color3);
+    --ws-empty: var(--color8);
+    --ws-hover: var(--color1);
+    --ws-urgent: var(--color12);
+}
+
+/* unset so we can style everything from the ground up. */
+* {
+    all: unset;
+    color: var(--foreground);
+    font-size: 16px;
+    font-family: "Jost*", sans-serif;
+    border-radius: 100px;
+}
+
+button {
+    background-size: 400% 400%;
+}
+
+#bar-inner {
+    padding: 4px;
+    border: solid 2px;
+    border-color: var(--border-color);
+    background-color: var(--window-bg);
+    min-height: 28px;
+}
+
+#workspaces {
+    padding: 10px;
+    min-width: 0px;
+    background-color: var(--module-bg);
+}
+
+#workspaces>button {
+    padding: 0px 10px;
+    transition: padding 0.05s steps(8);
+    background-color: var(--ws-inactive);
+}
+
+#workspaces>button>label {
+    font-size: 0px;
+}
+
+#workspaces>button:hover {
+    background-color: var(--ws-hover);
+}
+
+#workspaces>button.urgent {
+    background-color: var(--ws-urgent);
+}
+
+#workspaces>button.active {
+    padding: 0px 32px;
+    background-color: var(--ws-active);
+}
+
+#workspaces>button.empty {
+    background-color: var(--ws-empty);
+}
+
+
+#date-time,
+#hyprland-language,
+#hyprland-window {
+    background-color: var(--module-bg);
+    padding: 0px 8px;
+}
+
+menu>menuitem>label,
+#date-time>label,
+#hyprland-language>label,
+#hyprland-window>label {
+    font-weight: 900;
+}
+
+/* system tray */
+#system-tray {
+    padding: 2px 4px;
+    background-color: var(--module-bg);
+}
+
+/* menu and menu items (written for the system tray) */
+menu {
+    border: solid 2px;
+    border-radius: 10px;
+    border-color: var(--border-color);
+    background-color: var(--window-bg);
+}
+
+menu>menuitem {
+    border-radius: 0px;
+    background-color: var(--module-bg);
+    padding: 6px;
+    margin-left: 2px;
+    margin-right: 2px;
+}
+
+menu>menuitem:first-child {
+    margin-top: 1px;
+    border-radius: 8px 8px 0px 0px;
+}
+
+menu>menuitem:last-child {
+    margin-bottom: 1px;
+    border-radius: 0px 0px 8px 8px;
+}
+
+menu>menuitem:hover {
+    background-color: var(--border-color);
+}
+
+
+#battery-progress-bar,
+#volume-progress-bar {
+    color: transparent;
+    background-color: transparent
+}
+
+#cpu-progress-bar progress,
+#ram-progress-bar progress {
+    background-color: var(--color12);
+}
+
+#cpu-progress-bar trough,
+#ram-progress-bar trough {
+    background-color: var(--border-color);
+    
+}
+
+#ram-progress-bar,
+#cpu-progress-bar,
+#battery-progress-bar,
+#volume-progress-bar {
+    border: solid 0px var(--border-color);
+}
+
+
+#widgets-container {
+    background-color: var(--module-bg);
+    padding: 2px;
+}
+
+tooltip {
+    border: solid 2px;
+    border-color: var(--border-color);
+    background-color: var(--window-bg);
+}
+
+tooltip>* {
+    padding: 2px 4px
+}
+
+
+/* Notifications */
+#notification {
+    padding: 0.8rem;
+    border: solid 1px var(--border-color);
+    border-radius: 1rem;
+    background-color: var(--background);
+}
+
+#notification .summary {
+    font-size: 20px;
+    font-weight: bold;
+}
+
+#notification .body {
+    color: darker(var(--foreground));
+    font-weight: normal;
+}
+
+#notification .button {
+    padding: 0.6rem;
+    font-weight: 600;
+    border-radius: 3rem;
+    background-color: var(--ws-active);
+}
+
+#notification .button:hover {
+    background-color: lighter(var(--ws-hover));
+}
+
+
+button:hover {
+    background-color: lighter(var(--ws-hover));
+}
+
+
+/* Side panel */
+
+#window-inner {
+    border: solid 2px;
+    border-color: var(--color11);
+    background-color: var(--window-bg);
+    border-radius: 100px;
+    border-radius: 12px;
+    padding: 10px;
+}
+
+/* #date-time>label {
+    font-weight: 900;
+    font-size: 28px;
+} */
+
+#header {
+    border: solid 1px var(--border-color);
+    border-radius: 8px;
+    box-shadow: 0px 18px 23px -6px rgba(0, 0, 0, 0.75);
+    background: linear-gradient(90deg,
+            alpha(var(--color11), 0.2),
+            alpha(var(--background), 0.2),
+            var(--module-bg));
+}
+
+#profile-pic {
+    background-color: alpha(var(--color11), 0.2);
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
+    border-radius: 6px;
+    padding: 32px;
+    margin: 4px;
+}
+
+#progress-bar {
+    color: var(--module-bg);
+    border: solid 10px var(--border-color);
+}
+
+#progress-bar-sep {
+    padding: 4px;
+    margin: 16px 0px;
+    border-radius: 100px;
+    background-color: var(--module-bg);
+}
+
+#progress-bar-container {
+    background-color: var(--module-bg);
+    border-radius: 100px;
+    padding: 8px;
+}
+
+
+
+
+#metrics-small {
+    background-color: var(--background);
+    padding: 4px;
+    border-radius: 16px;
+    /*margin-top: 4px;*/
+  }
+  
+  #metrics-circle {
+    color: var(--color1);
+    border: 3px solid var(--color15);
+  }
+  
+  #metrics-circle.bat {
+    border: 3px solid var(--green);
+  }
+  
+  #metrics-circle.alert {
+    border: 3px solid var(--color15);
+  }
+  
+  /* #metrics-icon {
+    font-size: 16px;
+  } */
+  
+  #metrics-icon.alert {
+    color: var(--color14);
+  }
+  
+  #metrics-level {
+    font-weight: bold;
+    margin: 0 4px;
+  }
+  
+  #metrics-sep {
+    min-width: 4px;
+  }
+  
