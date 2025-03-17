@@ -25,7 +25,7 @@
     --ws-active: var(--color9);
     --ws-inactive: var(--color3);
     --ws-empty: var(--color8);
-    --ws-hover: var(--color1);
+    --hover: var(--color15);
     --ws-urgent: var(--color12);
 }
 
@@ -57,17 +57,13 @@ button {
 }
 
 #workspaces>button {
-    padding: 0px 10px;
+    padding: 10px 10px;
     transition: padding 0.05s steps(8);
     background-color: var(--ws-inactive);
 }
 
 #workspaces>button>label {
     font-size: 0px;
-}
-
-#workspaces>button:hover {
-    background-color: var(--ws-hover);
 }
 
 #workspaces>button.urgent {
@@ -81,6 +77,10 @@ button {
 
 #workspaces>button.empty {
     background-color: var(--ws-empty);
+}
+
+#workspaces>button:hover {
+    background-color: var(--hover);
 }
 
 

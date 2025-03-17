@@ -194,7 +194,7 @@ class BatteryWidget(Box):
 
     def update(self):
         if not (bat_sen := psutil.sensors_battery()):
-            self.battery_icon.set_from_icon_name("battery-missing-symbolic")
+            self.battery_icon.set_from_icon_name("battery-missing-symbolic", 16)
             self.battery_label.set_text("N/A")
             self.set_tooltip_text("Battery: N/A")
         else:

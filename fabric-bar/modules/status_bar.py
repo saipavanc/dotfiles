@@ -60,7 +60,9 @@ class StatusBar(Window):
         # self.status_widgets["cpu_widget"] = CPUWidget()
         # self.status_widgets["ram_widget"] = RAMWidget()
         self.status_widgets["metrics_small"] = MetricsSmall()
-        self.status_widgets["battery_widget"] = BatteryWidget()
+        # check if battery is present
+        if psutil.sensors_battery():
+            self.status_widgets["battery_widget"] = BatteryWidget()
         self.status_widgets["volume_widget"] = VolumeWidget()
 
 
