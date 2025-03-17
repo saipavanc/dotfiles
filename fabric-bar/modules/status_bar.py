@@ -15,7 +15,7 @@ from fabric.utils import (
 )
 
 from hyprland.hyprland_monitors import get_gdk_monitor_id_from_name, get_hyprctl_monitor_id_from_name
-from hyprland.widgets import Language, ActiveWindow, Workspaces, WorkspaceButton
+from hyprland.widgets import Language, ActiveWindow, Workspaces
 from .system_tray.widgets import SystemTray
 from .datetime_widget import DateTime
 from .mini_widgets import RAMWidget, CPUWidget, VolumeWidget, BatteryWidget
@@ -50,11 +50,11 @@ class StatusBar(Window):
             monitor_name=monitor_name,
             # buttons_factory=lambda ws_id: WorkspaceButton(id=ws_id, label=None),
         )
-        self.active_window = ActiveWindow(name="hyprland-window" + monitor_name, monitor_name=monitor_name)
+        self.active_window = ActiveWindow(name="hyprland-window", monitor_name=monitor_name)
         self.date_time = DateTime(name="date-time", formatters=("%A %b %d %I:%M %p"))
 
         if self.show_system_tray:
-            self.system_tray = SystemTray(name="system-tray" + monitor_name, icon_theme_name="Papirus-Dark", spacing=4)
+            self.system_tray = SystemTray(name="system-tray", icon_theme_name="Papirus-Dark", spacing=4)
 
         self.status_widgets = {}
         # self.status_widgets["cpu_widget"] = CPUWidget()

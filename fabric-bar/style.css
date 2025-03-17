@@ -85,8 +85,7 @@ button {
 
 
 #date-time,
-#hyprland-language,
-#hyprland-window {
+#hyprland-language{
     background-color: var(--module-bg);
     padding: 0px 8px;
 }
@@ -94,8 +93,8 @@ button {
 menu>menuitem>label,
 #date-time>label,
 #hyprland-language>label,
-#hyprland-window>label {
-    font-weight: 900;
+#hyprland-window {
+    font-weight: 500;
 }
 
 /* system tray */
