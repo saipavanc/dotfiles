@@ -34,6 +34,7 @@ class VolumeWidget(Box):
             print(e)
         self.audio = Audio()
         self._volume = 0
+        self._muted = False
 
         self.vol_label = Label(label="0%", style="margin: 0px 6px 0px 0px; font-size: 18px")
         self.progress_bar = CircularProgressBar(
@@ -59,6 +60,15 @@ class VolumeWidget(Box):
     @volume.setter
     def volume(self, value):
         self._volume = value
+        return
+    
+    @Property(float, "read-write", default_value=False)
+    def muted(self):
+        return self._muted
+
+    @muted.setter
+    def muted(self, value):
+        self._muted = value
         return
 
     def on_clicked(self, _, event):
@@ -92,22 +102,24 @@ class VolumeWidget(Box):
             update_image_from_name(self.vol_icon, "audio-volume-high-symbolic")
             self.vol_level_desc = "high"
 
-    def update_vol(self, v):
-        self.volume = v
+    def update_widget(self):
+        self.volume = self.audio.speaker.volume
+        self.muted = self.audio.speaker.muted
         self.set_volume_icon()
-        self.vol_label.set_text(f"{round(v)} %")
+        self.vol_label.set_text(f"{round(self.volume)} %")
 
     def on_speaker_changed(self, *_):
         if not self.audio.speaker:
             return
         
         self.volume = self.audio.speaker.volume
-        self.update_vol(self.volume)
+        self.muted = self.audio.speaker.muted
+        self.update_widget()
 
         self.set_tooltip_text(f"Volume: {round(self.volume)} %")
 
-        self.audio.speaker.bind(
-            "volume", "volume", self, lambda _, v: self.update_vol(v)
+        self.audio.speaker.connect(
+            "changed", lambda _,: self.update_widget()
         )
         return
     
