@@ -443,7 +443,7 @@ class ActiveWindow(Button):
         self.monitor_name:str = monitor_name
         self.workspace_id_list = [ws["id"] for ws in get_all_workspaces()]
         self.active_window_label = Label(label="", style="margin: 0px 6px 4px 4px; font-size: 18px")
-        self.active_window_icon = Gtk.Image.new_from_icon_name("window", Gtk.IconSize.BUTTON)
+        self.active_window_icon = Gtk.Image.new_from_icon_name("window", 20)
 
         self.box = Box(spacing=4, children=[self.active_window_icon, self.active_window_label])
         self.add(self.box)
@@ -510,7 +510,7 @@ class ActiveWindow(Button):
     def do_initialize(self):
         win_class, win_title = active_client_title_on_monitor(self.monitor_name)
         self.active_window_label.set_label(self.formatter.format(win_class=win_class, win_title=win_title))
-        update_image_from_name(self.active_window_icon, win_class if win_class is not '' else None)
+        update_image_from_name(self.active_window_icon, win_class if win_class is not '' else None, 20)
         return win_class, win_title
 
 
