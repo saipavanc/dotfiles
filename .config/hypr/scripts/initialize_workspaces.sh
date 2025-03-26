@@ -10,8 +10,8 @@ if xrandr | grep -q "$EXTERNAL_MONITOR connected"; then
 	for i in {1..10}
 	do
 		hyprctl dispatch workspace $i
-        hyprctl dispatch moveworkspacetomonitor $i 1
 	done
+	hyprctl dispatch workspace 1
 fi
 
 # initialize workspaces on the default monitor
@@ -20,7 +20,6 @@ hyprctl dispatch focusmonitor $INTERNAL_MONITOR
 for i in {11..15}
 do
 	hyprctl dispatch workspace $i
-    hyprctl dispatch moveworkspacetomonitor $i 0
 done
 # switch to the first workspace after init
-hyprctl dispatch workspace 1
+hyprctl dispatch workspace 11
