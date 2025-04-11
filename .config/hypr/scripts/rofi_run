@@ -79,11 +79,11 @@ for arg in "$@"; do
             fi
 
             case "$ANS" in
-                *Lock) gnome-screensaver-command -l ;;
+                *Lock) loginctl lock-session ;;
                 *Reboot) systemctl reboot ;;
-		*Hibernate) gnome-screensaver-command -l && sleep 2 && systemctl hibernate ;;
+		*Hibernate) systemctl hibernate ;;
                 *Shutdown) systemctl -i poweroff ;;
-                *Logout) bspc quit ;;
+                *Logout) hyprctl dispatch exit;;
                 #*Logout) if [[ "$XDG_SESSION_DESKTOP" == *"KDE"* ]]; then qdbus org.kde.ksmserver /KSMServer org.kde.KSMServerInterface.logout 0 0 0;else session-logout || pkill -15 -t tty"$XDG_VTNR" Xorg;fi ;;
             esac
             ;;

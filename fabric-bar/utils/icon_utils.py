@@ -107,7 +107,7 @@ def icon_image_from_name(icon_name: str, size: int = 16):
     image.set_from_pixbuf(pixbuf)
     return image
 
-def update_image_from_name(image: Gtk.Image, icon_name: str, size: int = 16):
+def update_image_from_name(image: Gtk.Image, icon_name: str, size = 16):
     """_summary_
 
     Parameters
@@ -130,7 +130,7 @@ def update_image_from_name(image: Gtk.Image, icon_name: str, size: int = 16):
     try:
         pixbuf=Gtk.IconTheme.get_default().load_icon(icon_name.lower(), size, 0)
     except:
-        icon_name = "application-x-executable-symbolic"
+        icon_name = "window"
         pixbuf = Gtk.IconTheme.get_default().load_icon(icon_name, size, 0)
     image.set_from_pixbuf(pixbuf)
     return image
